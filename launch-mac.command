@@ -50,16 +50,64 @@ while lsof -i:$PORT &>/dev/null 2>&1; do
 done
 export PORT=$PORT
 
-# ── Start the server ──────────────────────────────────────────────────────
-npm run dev > /tmp/mycloset.log 2>&1 &
-SERVER_PID=$!
+# ── Start server with health-check + auto-restart ─────────────────────────
+MAX_ATTEMPTS=3
+ATTEMPT=0
 
-echo "Starting My Closet on port $PORT…"
-for i in {1..30}; do
-  if curl -s "http://localhost:$PORT" > /dev/null 2>&1; then
+start_and_verify() {
+  ATTEMPT=$((ATTEMPT + 1))
+  echo "Starting My Closet on port $PORT… (attempt $ATTEMPT)"
+
+  # Start the server
+  npm run dev > /tmp/mycloset.log 2>&1 &
+  SERVER_PID=$!
+
+  # Wait up to 30 s for the port to accept connections
+  READY=0
+  for i in $(seq 1 30); do
+    if curl -s "http://localhost:$PORT" > /dev/null 2>&1; then
+      READY=1
+      break
+    fi
+    sleep 1
+  done
+
+  if [ "$READY" -eq 0 ]; then
+    echo "Port never opened — killing and retrying..."
+    kill "$SERVER_PID" 2>/dev/null
+    wait "$SERVER_PID" 2>/dev/null
+    return 1
+  fi
+
+  # ── Health-check: make sure the response body is non-trivial ─────────────
+  BODY=$(curl -s --max-time 5 "http://localhost:$PORT/" 2>/dev/null)
+  BODY_LEN=${#BODY}
+
+  if [ "$BODY_LEN" -lt 50 ]; then
+    echo "Server returned a blank/empty page (${BODY_LEN} bytes) — restarting..."
+    kill "$SERVER_PID" 2>/dev/null
+    wait "$SERVER_PID" 2>/dev/null
+    sleep 2
+    return 1
+  fi
+
+  # All good
+  echo "Server healthy (${BODY_LEN} bytes). Opening browser..."
+  return 0
+}
+
+# Try up to MAX_ATTEMPTS times
+while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+  if start_and_verify; then
     break
   fi
-  sleep 1
+  if [ $ATTEMPT -ge $MAX_ATTEMPTS ]; then
+    echo "Could not start server after $MAX_ATTEMPTS attempts — opening browser anyway."
+    # Restart one final time for the browser to hit
+    npm run dev > /tmp/mycloset.log 2>&1 &
+    SERVER_PID=$!
+    sleep 3
+  fi
 done
 
 # ── Open desktop browser ──────────────────────────────────────────────────
