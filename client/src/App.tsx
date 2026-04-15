@@ -11,7 +11,7 @@ class AppErrorBoundary extends Component<{ children: ReactNode }, { error: Error
   render() {
     if (this.state.error) {
       return (
-        <div style={{ minHeight: "100dvh", background: "#FAF8F3", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, padding: 32 }}>
+        <div style={{ minHeight: "100dvh", background: "#FAF8F3", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, padding: 32, fontFamily: "'DM Sans', sans-serif" }}>
           <svg aria-label="My Closet" viewBox="0 0 28 28" width="40" height="40" fill="none">
             <circle cx="14" cy="7" r="3.5" stroke="#C9A84C" strokeWidth="1.5"/>
             <line x1="14" y1="10.5" x2="14" y2="15" stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round"/>
