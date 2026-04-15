@@ -1,0 +1,27 @@
+# NSIS Installer Script for Grandma's Closet
+
+!include "LogicLib.nsh"
+
+Name "Grandma's Closet"
+OutFile "GrandmasClosetInstaller.exe"
+InstallDir "$PROGRAMFILES\Grandma's Closet"
+
+Page directory
+Page instfiles
+
+Section "Install"
+    SetOutPath "$INSTDIR"
+    File "source_files/*"
+    File "assets/image.ico"
+    CreateShortCut "$DESKTOP\Grandma's Closet.lnk" "$INSTDIR\YourMainExecutable.exe"
+SectionEnd
+
+Section "Uninstall"
+    Delete "$INSTDIR\YourMainExecutable.exe"
+    RMDir "$INSTDIR"
+    Delete "$DESKTOP\Grandma's Closet.lnk"
+SectionEnd
+
+Function .onInit
+    !insertmacro MUI_CHECK_VERSION 1.0.0
+FunctionEnd
