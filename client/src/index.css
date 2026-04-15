@@ -13,74 +13,75 @@
 
 @layer base {
   :root {
-    /* ── Ivory / Cream surfaces ── */
-    --background:        48 30% 97%;   /* #FAF8F3 warm ivory */
-    --foreground:        0 0% 8%;      /* #141414 near-black */
-    --card:              48 25% 98%;
-    --card-foreground:   0 0% 8%;
-    --popover:           48 25% 99%;
-    --popover-foreground:0 0% 8%;
+    /* ── Champagne / warm gold surfaces (light mode) ── */
+    --background:        42 38% 91%;   /* #EFE4CC warm champagne */
+    --foreground:        30 10% 12%;   /* #201C16 dark warm brown-black */
+    --card:              42 35% 94%;   /* slightly lighter card */
+    --card-foreground:   30 10% 12%;
+    --popover:           42 35% 95%;
+    --popover-foreground:30 10% 12%;
 
     /* ── Noir primary ── */
-    --primary:           0 0% 8%;
-    --primary-foreground:48 30% 97%;
+    --primary:           30 10% 12%;
+    --primary-foreground:42 38% 91%;
 
     /* ── Champagne gold accent ── */
     --accent:            42 68% 54%;   /* #C9A84C */
-    --accent-foreground: 0 0% 8%;
+    --accent-foreground: 30 10% 12%;
 
     /* ── Neutral tones ── */
-    --secondary:         42 20% 93%;
-    --secondary-foreground: 0 0% 20%;
-    --muted:             42 15% 93%;
-    --muted-foreground:  0 0% 45%;
+    --secondary:         42 28% 84%;
+    --secondary-foreground: 30 10% 20%;
+    --muted:             42 22% 85%;
+    --muted-foreground:  30 8% 42%;
 
     /* ── Status ── */
     --destructive:       0 62% 44%;
     --destructive-foreground: 0 0% 98%;
 
     /* ── Borders ── */
-    --border:            42 15% 84%;
-    --input:             42 15% 84%;
+    --border:            42 22% 76%;
+    --input:             42 22% 76%;
     --ring:              42 68% 54%;
 
-    --radius: 0.25rem;   /* editorial: very tight radius */
+    --radius: 0.25rem;
 
     /* ── Custom tokens ── */
     --gold:        #C9A84C;
     --gold-light:  #E8D5A0;
     --gold-dark:   #8B6914;
-    --noir:        #141414;
-    --ivory:       #FAF8F3;
+    --noir:        #201C16;
+    --ivory:       #EFE4CC;
     --rule-color:  #C9A84C;
   }
 
   .dark {
-    --background:         0 0% 6%;     /* #0F0F0F */
-    --foreground:         48 20% 92%;  /* warm off-white */
-    --card:               0 0% 9%;
-    --card-foreground:    48 20% 92%;
-    --popover:            0 0% 8%;
-    --popover-foreground: 48 20% 92%;
-    --primary:            48 20% 92%;
-    --primary-foreground: 0 0% 8%;
-    --accent:             42 55% 50%;
-    --accent-foreground:  0 0% 8%;
-    --secondary:          0 0% 14%;
-    --secondary-foreground:48 15% 80%;
-    --muted:              0 0% 13%;
-    --muted-foreground:   0 0% 52%;
+    /* ── Dark charcoal mode ── */
+    --background:         220 8% 14%;  /* #212428 dark charcoal */
+    --foreground:         42 25% 88%;  /* warm off-white */
+    --card:               220 8% 17%; /* #282C30 slightly lighter */
+    --card-foreground:    42 25% 88%;
+    --popover:            220 8% 16%;
+    --popover-foreground: 42 25% 88%;
+    --primary:            42 25% 88%;
+    --primary-foreground: 220 8% 14%;
+    --accent:             42 60% 52%;
+    --accent-foreground:  220 8% 14%;
+    --secondary:          220 8% 20%;
+    --secondary-foreground:42 20% 72%;
+    --muted:              220 8% 19%;
+    --muted-foreground:   220 5% 54%;
     --destructive:        0 55% 55%;
     --destructive-foreground: 0 0% 98%;
-    --border:             0 0% 18%;
-    --input:              0 0% 18%;
-    --ring:               42 55% 50%;
+    --border:             220 8% 24%;
+    --input:              220 8% 24%;
+    --ring:               42 60% 52%;
 
     --gold:        #C9A84C;
     --gold-light:  #6B5420;
     --gold-dark:   #E8D5A0;
     --noir:        #F0EDE6;
-    --ivory:       #0F0F0F;
+    --ivory:       #212428;
     --rule-color:  #C9A84C;
   }
 }
