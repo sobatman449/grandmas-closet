@@ -29,6 +29,7 @@ if git remote get-url origin &>/dev/null 2>&1; then
   if [ "$LOCAL" != "$REMOTE" ]; then
     echo "Update found — pulling latest version..."
     git pull origin main --quiet 2>/dev/null
+    touch "$DIR/.updated"
     # Re-run npm install in case dependencies changed
     npm install --silent
     osascript -e 'display notification "My Closet was updated to the latest version!" with title "My Closet 👗"'

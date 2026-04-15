@@ -2,8 +2,55 @@ import type { Express } from "express";
 import { type Server } from "http";
 import { storage } from "./storage";
 import { insertClothingItemSchema, insertAvatarPhotoSchema, insertOutfitSchema, insertSuitcaseSchema } from "@shared/schema";
+import fs from "fs";
+import path from "path";
+
+// Parse the latest version block from CHANGELOG.md
+function parseLatestChangelog(): { version: string; date: string; bullets: string[] } | null {
+  try {
+    const changelogPath = path.join(process.cwd(), "CHANGELOG.md");
+    const raw = fs.readFileSync(changelogPath, "utf-8");
+    const lines = raw.split("\n");
+    let version = "";
+    let date = "";
+    const bullets: string[] = [];
+    let inBlock = false;
+
+    for (const line of lines) {
+      const h2 = line.match(/^## (.+?) — (.+)$/);
+      if (h2) {
+        if (inBlock) break; // only want the first (newest) block
+        version = h2[1].trim();
+        date = h2[2].trim();
+        inBlock = true;
+        continue;
+      }
+      if (inBlock && line.startsWith("- ")) {
+        bullets.push(line.slice(2).trim());
+      }
+    }
+
+    return version ? { version, date, bullets } : null;
+  } catch {
+    return null;
+  }
+}
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
+
+  // ── Update / Changelog ──────────────────────────────────────────────────
+  // The Windows launcher writes a .updated flag file after a successful pull.
+  // The frontend polls this endpoint once on load; if updated=true, it shows
+  // the What's New banner and then clears the flag.
+  app.get("/api/whats-new", (_req, res) => {
+    const flagPath = path.join(process.cwd(), ".updated");
+    const wasUpdated = fs.existsSync(flagPath);
+    if (wasUpdated) {
+      try { fs.unlinkSync(flagPath); } catch {}
+    }
+    const changelog = parseLatestChangelog();
+    res.json({ updated: wasUpdated, changelog });
+  });
 
   // ── Clothing Items ──────────────────────────────────────────────────────
   app.get("/api/items", (_req, res) => {
