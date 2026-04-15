@@ -204,24 +204,24 @@ export default function TryOnPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 style={{fontFamily:"'Cormorant Garamond',serif"}} className="text-3xl font-semibold">Try It On</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">See how your pieces look on you</p>
+          <h1 className="page-title">Try It On</h1>
+          <p className="page-subtitle">See how your pieces look on you</p>
         </div>
         <div className="flex gap-2">
           {overlays.length > 0 && (
-            <Button variant="outline" size="sm" onClick={() => setOverlays([])} className="gap-1.5">
-              <RotateCcw size={14} /> Clear
-            </Button>
+            <button className="btn-ghost" style={{padding:"6px 12px",fontSize:11,gap:6,display:"inline-flex",alignItems:"center"}} onClick={() => setOverlays([])}>
+              <RotateCcw size={13} /> Clear
+            </button>
           )}
-          <Button
+          <button
             data-testid="btn-add-overlay"
-            size="sm"
+            className="btn-noir"
+            style={{padding:"6px 14px"}}
             onClick={() => setShowItemPicker(true)}
             disabled={!activeAvatar}
-            className="gap-1.5"
           >
-            <Plus size={14} /> Add Piece
-          </Button>
+            <Plus size={13} /> Add Piece
+          </button>
         </div>
       </div>
 
@@ -287,9 +287,9 @@ export default function TryOnPage() {
         {/* Right panel */}
         <div className="space-y-4">
           {/* Photos */}
-          <div className="bg-card border border-border rounded-xl p-4 space-y-3">
+          <div className="editorial-card space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold">My Photos</h3>
+              <h3 style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:"hsl(var(--foreground))"}}>My Photos</h3>
               <button
                 data-testid="btn-upload-avatar"
                 onClick={() => avatarInputRef.current?.click()}
@@ -333,8 +333,8 @@ export default function TryOnPage() {
 
           {/* Clothing on canvas */}
           {overlays.length > 0 && (
-            <div className="bg-card border border-border rounded-xl p-4 space-y-3">
-              <h3 className="text-sm font-semibold">On Canvas</h3>
+            <div className="editorial-card space-y-3">
+              <h3 style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:"hsl(var(--foreground))"}}>On Canvas</h3>
               <div className="space-y-2">
                 {overlays.map(ov => (
                   <div key={ov.id} className="flex items-center gap-2 group">
@@ -354,9 +354,9 @@ export default function TryOnPage() {
 
           {/* Quick-add from closet */}
           {showItemPicker && (
-            <div className="bg-card border border-primary/30 rounded-xl p-4 space-y-3">
+            <div className="editorial-card space-y-3" style={{borderColor:"var(--gold)",borderWidth:1}}>
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold">Pick a Piece</h3>
+                <h3 style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:"hsl(var(--foreground))"}}>Pick a Piece</h3>
                 <button onClick={() => setShowItemPicker(false)} className="text-muted-foreground hover:text-foreground text-lg leading-none">×</button>
               </div>
               {itemsWithImages.length === 0 ? (

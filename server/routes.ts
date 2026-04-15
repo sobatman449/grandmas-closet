@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { insertClothingItemSchema, insertAvatarPhotoSchema, insertOutfitSchema, insertSuitcaseSchema } from "@shared/schema";
 import fs from "fs";
 import path from "path";
+import { exec } from "child_process";
 
 // Parse the latest version block from CHANGELOG.md
 function parseLatestChangelog(): { version: string; date: string; bullets: string[] } | null {
@@ -143,6 +144,63 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   app.delete("/api/suitcases/:id", (req, res) => {
     storage.deleteSuitcase(Number(req.params.id));
     res.json({ ok: true });
+  });
+
+  // ── Feedback → GitHub Issues ─────────────────────────────────────────────
+  // Accepts { body: string } and creates a GitHub issue on sobatman449/grandmas-closet.
+  // Uses the GITHUB_TOKEN env var if set, otherwise falls back to the `gh` CLI
+  // (which is authenticated via git credential helpers on the launcher machine).
+  app.post("/api/feedback", async (req, res) => {
+    const { body } = req.body || {};
+    if (!body || typeof body !== "string" || !body.trim()) {
+      return res.status(400).json({ error: "body is required" });
+    }
+
+    const title = body.trim().length > 72
+      ? body.trim().slice(0, 69) + "…"
+      : body.trim();
+    const issueBody = `**Feedback from My Closet app**\n\n${body.trim()}\n\n---\n*Sent via the in-app feedback button*`;
+
+    // ── Strategy 1: GITHUB_TOKEN env var ────────────────────────────────────
+    const token = process.env.GITHUB_TOKEN;
+    if (token) {
+      try {
+        const response = await fetch(
+          "https://api.github.com/repos/sobatman449/grandmas-closet/issues",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/vnd.github+json",
+              "Content-Type": "application/json",
+              "X-GitHub-Api-Version": "2022-11-28",
+            },
+            body: JSON.stringify({
+              title,
+              body: issueBody,
+              labels: ["feedback"],
+            }),
+          }
+        );
+        if (response.ok) {
+          const issue = await response.json() as { number: number; html_url: string };
+          return res.json({ ok: true, issueNumber: issue.number, url: issue.html_url });
+        }
+      } catch {
+        // fall through to gh CLI
+      }
+    }
+
+    // ── Strategy 2: gh CLI (installed on the launcher machine) ──────────────
+    const ghCmd = `gh issue create --repo sobatman449/grandmas-closet --title ${JSON.stringify(title)} --body ${JSON.stringify(issueBody)} --label feedback`;
+    exec(ghCmd, (err, stdout) => {
+      if (err) {
+        console.error("[feedback] gh CLI error:", err.message);
+        return res.status(500).json({ error: "Could not create issue", detail: err.message });
+      }
+      // stdout is the issue URL
+      return res.json({ ok: true, url: stdout.trim() });
+    });
   });
 
   return httpServer;

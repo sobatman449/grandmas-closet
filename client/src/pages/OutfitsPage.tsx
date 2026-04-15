@@ -24,10 +24,10 @@ function OutfitCard({ outfit, items, onDelete }: { outfit: Outfit; items: Clothi
   const pieces = items.filter(i => ids.includes(i.id));
 
   return (
-    <div data-testid={`outfit-card-${outfit.id}`} className="bg-card border border-border rounded-xl p-4 space-y-3 group">
+    <div data-testid={`outfit-card-${outfit.id}`} className="editorial-card space-y-3 group">
       <div className="flex items-start justify-between">
         <div>
-          <h3 style={{fontFamily:"'Cormorant Garamond',serif"}} className="text-lg font-semibold">{outfit.name}</h3>
+          <h3 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:"1.05rem",fontWeight:700,letterSpacing:"-0.01em"}}>{outfit.name}</h3>
           {outfit.occasion && (
             <Badge variant="secondary" className="mt-1 text-xs">{outfit.occasion}</Badge>
           )}
@@ -98,7 +98,7 @@ function BuildOutfitModal({ open, onClose, items, onSave }: {
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle style={{fontFamily:"'Cormorant Garamond',serif"}} className="text-xl">Build an Outfit</DialogTitle>
+          <DialogTitle style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:"1.15rem",fontWeight:700}}>Build an Outfit</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
@@ -167,15 +167,16 @@ function BuildOutfitModal({ open, onClose, items, onSave }: {
           <div className="text-xs text-muted-foreground">{selectedIds.length} piece{selectedIds.length !== 1 ? "s" : ""} selected</div>
 
           <div className="flex gap-2">
-            <Button variant="outline" onClick={onClose} className="flex-1">Cancel</Button>
-            <Button
+            <button className="btn-ghost flex-1 justify-center" onClick={onClose}>Cancel</button>
+            <button
               data-testid="btn-save-outfit"
+              className="btn-noir flex-1 justify-center"
               onClick={handleSave}
               disabled={!name.trim()}
-              className="flex-1"
+              style={{opacity: !name.trim() ? 0.5 : 1}}
             >
               Save Outfit
-            </Button>
+            </button>
           </div>
         </div>
       </DialogContent>
@@ -208,12 +209,12 @@ export default function OutfitsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 style={{fontFamily:"'Cormorant Garamond',serif"}} className="text-3xl font-semibold">Outfits</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">{outfits.length} {outfits.length === 1 ? "look" : "looks"} assembled</p>
+          <h1 className="page-title">Outfits</h1>
+          <p className="page-subtitle">{outfits.length} {outfits.length === 1 ? "look" : "looks"} assembled</p>
         </div>
-        <Button data-testid="btn-new-outfit" onClick={() => setBuildOpen(true)} className="gap-2">
-          <Plus size={16} /> New Outfit
-        </Button>
+        <button data-testid="btn-new-outfit" onClick={() => setBuildOpen(true)} className="btn-noir">
+          <Plus size={15} /> New Outfit
+        </button>
       </div>
 
       {/* Occasion filter */}

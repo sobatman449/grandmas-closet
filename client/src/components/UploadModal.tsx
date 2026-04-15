@@ -94,7 +94,7 @@ export default function UploadModal({ open, onClose, onSave }: Props) {
     <Dialog open={open} onOpenChange={(o) => { if (!o) { resetState(); onClose(); } }}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle style={{fontFamily:"'Cormorant Garamond',serif"}} className="text-xl">Add to Closet</DialogTitle>
+          <DialogTitle style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:"1.15rem",fontWeight:700}}>Add to Closet</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -130,15 +130,15 @@ export default function UploadModal({ open, onClose, onSave }: Props) {
                   <Progress value={progress} className="h-1.5" />
                 </>
               ) : (
-                <Button data-testid="btn-remove-bg" onClick={handleProcess} variant="outline" size="sm" className="w-full">
-                  <ImageIcon size={14} className="mr-2" /> Remove Background
-                </Button>
+                <button data-testid="btn-remove-bg" onClick={handleProcess} className="btn-ghost w-full justify-center">
+                  <ImageIcon size={14} /> Remove Background
+                </button>
               )}
             </div>
           )}
 
           {processed && (
-            <div className="text-xs text-center text-green-600 font-medium">✓ Background removed</div>
+            <div style={{fontSize:10,textAlign:"center" as const,letterSpacing:"0.1em",textTransform:"uppercase" as const,color:"var(--gold)",fontWeight:600}}>✓ Background removed</div>
           )}
 
           {/* Fields */}
@@ -168,15 +168,16 @@ export default function UploadModal({ open, onClose, onSave }: Props) {
           </div>
 
           <div className="flex gap-2 pt-1">
-            <Button variant="outline" onClick={() => { resetState(); onClose(); }} className="flex-1">Cancel</Button>
-            <Button
+            <button className="btn-ghost flex-1 justify-center" onClick={() => { resetState(); onClose(); }}>Cancel</button>
+            <button
               data-testid="btn-save-item"
+              className="btn-noir flex-1 justify-center"
               onClick={handleSave}
               disabled={!preview || isProcessing}
-              className="flex-1"
+              style={{opacity: (!preview || isProcessing) ? 0.5 : 1}}
             >
               Add to Closet
-            </Button>
+            </button>
           </div>
         </div>
       </DialogContent>

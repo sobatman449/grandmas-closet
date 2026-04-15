@@ -4,50 +4,54 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import ClosetPage from "./pages/ClosetPage";
-import WhatsNewBanner from "./components/WhatsNewBanner";
-import InstallBanner from "./components/InstallBanner";
 import OutfitsPage from "./pages/OutfitsPage";
 import SuitcasePage from "./pages/SuitcasePage";
 import TryOnPage from "./pages/TryOnPage";
+import WhatsNewBanner from "./components/WhatsNewBanner";
+import InstallBanner from "./components/InstallBanner";
+import FeedbackButton from "./components/FeedbackButton";
 
-function Nav() {
+const NAV_LINKS = [
+  { href: "/",          label: "Closet"    },
+  { href: "/outfits",   label: "Outfits"   },
+  { href: "/suitcases", label: "Suitcases" },
+  { href: "/tryon",     label: "Try-On"    },
+];
+
+function Masthead() {
   const [location] = useLocation();
-  const links = [
-    { href: "/", label: "My Closet", icon: "👗" },
-    { href: "/outfits", label: "Outfits", icon: "✨" },
-    { href: "/suitcases", label: "Suitcases", icon: "🧳" },
-    { href: "/tryon", label: "Try-On", icon: "🪞" },
-  ];
   return (
-    <header className="sticky top-0 z-40 bg-card/95 backdrop-blur border-b border-border">
-      <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
-        <div className="flex items-center gap-2">
-          <svg aria-label="My Closet" viewBox="0 0 32 32" width="28" height="28" fill="none">
-            <rect x="4" y="14" width="24" height="14" rx="3" fill="hsl(340,35%,45%)" opacity="0.15" stroke="hsl(340,35%,45%)" strokeWidth="1.5"/>
-            <line x1="16" y1="2" x2="16" y2="14" stroke="hsl(40,70%,55%)" strokeWidth="2" strokeLinecap="round"/>
-            <path d="M12 6 Q16 2 20 6" stroke="hsl(40,70%,55%)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-            <line x1="4" y1="14" x2="28" y2="14" stroke="hsl(40,70%,55%)" strokeWidth="2.5" strokeLinecap="round"/>
+    <header className="masthead sticky top-0 z-40">
+      <div className="masthead-inner">
+        {/* Wordmark */}
+        <div className="masthead-wordmark">
+          {/* Inline SVG logo: minimal gold hanger mark */}
+          <svg aria-label="My Closet" viewBox="0 0 28 28" width="22" height="22" fill="none">
+            <circle cx="14" cy="7" r="3.5" stroke="#C9A84C" strokeWidth="1.5"/>
+            <line x1="14" y1="10.5" x2="14" y2="15" stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="4"  y1="15"   x2="24" y2="15"  stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="4"  y1="15"   x2="6"  y2="20"  stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="24" y1="15"   x2="22" y2="20"  stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
-          <span className="font-display text-lg font-semibold text-primary" style={{fontFamily:"'Cormorant Garamond',serif"}}>My Closet</span>
+          My Closet
         </div>
-        <nav className="flex gap-1">
-          {links.map(l => (
+
+        {/* Nav */}
+        <nav className="masthead-nav">
+          {NAV_LINKS.map(l => (
             <Link key={l.href} href={l.href}>
               <button
-                data-testid={`nav-${l.href.replace("/","") || "home"}`}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all
-                  ${location === l.href
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  }`}
+                data-testid={`nav-${l.href.replace("/", "") || "home"}`}
+                className={`nav-link ${location === l.href ? "active" : ""}`}
               >
-                <span>{l.icon}</span>
-                <span className="hidden sm:inline">{l.label}</span>
+                {l.label}
               </button>
             </Link>
           ))}
         </nav>
       </div>
+      {/* Thin gold rule under nav */}
+      <div className="gold-rule" />
     </header>
   );
 }
@@ -57,19 +61,23 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <Router hook={useHashLocation}>
         <div className="min-h-dvh bg-background">
-          <Nav />
-          <main className="max-w-6xl mx-auto px-4 py-6">
+          <Masthead />
+          <main
+            className="max-w-5xl mx-auto px-6 py-8"
+            style={{ paddingLeft: "max(1.5rem, env(safe-area-inset-left))", paddingRight: "max(1.5rem, env(safe-area-inset-right))" }}
+          >
             <Switch>
-              <Route path="/" component={ClosetPage} />
-              <Route path="/outfits" component={OutfitsPage} />
+              <Route path="/"          component={ClosetPage}   />
+              <Route path="/outfits"   component={OutfitsPage}  />
               <Route path="/suitcases" component={SuitcasePage} />
-              <Route path="/tryon" component={TryOnPage} />
+              <Route path="/tryon"     component={TryOnPage}    />
             </Switch>
           </main>
         </div>
+        <FeedbackButton />
+        <WhatsNewBanner />
+        <InstallBanner />
       </Router>
-      <WhatsNewBanner />
-      <InstallBanner />
       <Toaster />
     </QueryClientProvider>
   );

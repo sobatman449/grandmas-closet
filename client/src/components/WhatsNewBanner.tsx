@@ -40,8 +40,8 @@ export default function WhatsNewBanner() {
     <div
       role="status"
       aria-live="polite"
-      className="fixed bottom-5 right-5 z-50 w-80 rounded-2xl shadow-xl border border-border bg-card overflow-hidden"
-      style={{ animation: "slideUp 0.4s cubic-bezier(0.16,1,0.3,1) both" }}
+      className="fixed bottom-5 right-5 z-50 w-80 shadow-2xl overflow-hidden"
+      style={{ border: "1px solid hsl(var(--border))", borderRadius: 2, background: "hsl(var(--card))", animation: "slideUp 0.4s cubic-bezier(0.16,1,0.3,1) both" }}
     >
       <style>{`
         @keyframes slideUp {
@@ -50,13 +50,27 @@ export default function WhatsNewBanner() {
         }
       `}</style>
 
-      {/* Header bar */}
-      <div className="flex items-center justify-between px-4 py-3 bg-primary/10 border-b border-border">
-        <div className="flex items-center gap-2">
-          <Sparkles size={16} className="text-primary" />
+      {/* Header bar — noir masthead style */}
+      <div
+        style={{
+          background: "hsl(var(--foreground))",
+          color: "hsl(var(--background))",
+          padding: "10px 16px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Sparkles size={13} />
           <span
-            className="text-sm font-semibold text-primary"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: "0.14em",
+              textTransform: "uppercase" as const,
+            }}
           >
             What's New
           </span>
@@ -64,22 +78,24 @@ export default function WhatsNewBanner() {
         <button
           onClick={() => setVisible(false)}
           aria-label="Dismiss"
-          className="text-muted-foreground hover:text-foreground transition-colors rounded-full p-0.5"
+          style={{ background: "none", border: "none", color: "hsl(var(--background) / 0.7)", cursor: "pointer", display: "flex", alignItems: "center" }}
         >
-          <X size={15} />
+          <X size={14} />
         </button>
       </div>
+      {/* Gold rule */}
+      <div style={{ height: 1, background: "linear-gradient(90deg, transparent, var(--gold), transparent)" }} />
 
       {/* Body */}
       <div className="px-4 py-3 space-y-2">
         <div className="flex items-baseline justify-between">
-          <span className="text-xs font-semibold text-foreground">{version}</span>
+          <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 13, fontWeight: 700 }}>{version}</span>
           <span className="text-xs text-muted-foreground">{date}</span>
         </div>
         <ul className="space-y-1.5">
           {bullets.map((b, i) => (
             <li key={i} className="flex gap-2 text-xs text-foreground leading-snug">
-              <span className="text-primary mt-0.5 flex-shrink-0">✦</span>
+              <span style={{ color: "var(--gold)", marginTop: 2, flexShrink: 0 }}>✦</span>
               <span>{b}</span>
             </li>
           ))}
@@ -90,9 +106,22 @@ export default function WhatsNewBanner() {
       <div className="px-4 pb-3">
         <button
           onClick={() => setVisible(false)}
-          className="w-full text-xs text-center text-muted-foreground hover:text-primary transition-colors py-1"
+          style={{
+            width: "100%",
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: 10,
+            fontWeight: 600,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase" as const,
+            color: "hsl(var(--muted-foreground))",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "6px 0",
+            textAlign: "center" as const,
+          }}
         >
-          Got it — close
+          Got it
         </button>
       </div>
     </div>

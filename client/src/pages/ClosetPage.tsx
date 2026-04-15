@@ -111,16 +111,14 @@ export default function ClosetPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 style={{fontFamily:"'Cormorant Garamond',serif"}} className="text-3xl font-semibold text-foreground">
-            My Closet
-          </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
+            <h1 className="page-title">My Closet</h1>
+          <p className="page-subtitle">
             {totalCount} {totalCount === 1 ? "piece" : "pieces"} in your collection
           </p>
         </div>
-        <Button data-testid="btn-add-item" onClick={() => setUploadOpen(true)} className="gap-2">
-          <Plus size={16} /> Add Item
-        </Button>
+        <button data-testid="btn-add-item" onClick={() => setUploadOpen(true)} className="btn-noir">
+          <Plus size={15} /> Add Item
+        </button>
       </div>
 
       {/* Section tabs */}
@@ -171,7 +169,7 @@ export default function ClosetPage() {
         </div>
       ) : activeSection === "rack" ? (
         /* ── Hanging Rack ─────────────────────────────────────────── */
-        <div className="bg-card rounded-xl border border-border p-4 space-y-3">
+        <div className="rack-section space-y-3">
           <div className="relative px-8">
             {/* Rail */}
             <div className="rack-rail">
@@ -204,7 +202,7 @@ export default function ClosetPage() {
         </div>
       ) : (
         /* ── Shelf Grid ────────────────────────────────────────────── */
-        <div className="bg-card rounded-xl border border-border p-4">
+        <div className="rack-section">
           <div className="shelf-grid">
             {rackCatItems.map(item => (
               <ShelfItem key={item.id} item={item} onDelete={() => deleteMutation.mutate(item.id)} />

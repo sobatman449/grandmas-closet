@@ -32,7 +32,7 @@ function NewSuitcaseModal({ open, onClose, onSave }: {
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle style={{fontFamily:"'Cormorant Garamond',serif"}} className="text-xl">New Trip</DialogTitle>
+          <DialogTitle style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:"1.15rem",fontWeight:700}}>New Trip</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           <div className="space-y-1">
@@ -58,8 +58,8 @@ function NewSuitcaseModal({ open, onClose, onSave }: {
             <Textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Warm weather, 5 days..." rows={2} className="resize-none" />
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={onClose} className="flex-1">Cancel</Button>
-            <Button data-testid="btn-save-suitcase" onClick={handleSave} disabled={!tripName.trim()} className="flex-1">Create Trip</Button>
+            <button className="btn-ghost flex-1 justify-center" onClick={onClose}>Cancel</button>
+            <button data-testid="btn-save-suitcase" className="btn-noir flex-1 justify-center" onClick={handleSave} disabled={!tripName.trim()} style={{opacity: !tripName.trim() ? 0.5 : 1}}>Create Trip</button>
           </div>
         </div>
       </DialogContent>
@@ -95,7 +95,7 @@ function PackModal({ open, onClose, suitcase, items, outfits, onUpdate }: {
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle style={{fontFamily:"'Cormorant Garamond',serif"}} className="text-xl">
+          <DialogTitle style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:"1.15rem",fontWeight:700}}>
             Pack for {suitcase.tripName}
           </DialogTitle>
         </DialogHeader>
@@ -174,7 +174,7 @@ function PackModal({ open, onClose, suitcase, items, outfits, onUpdate }: {
           </div>
         )}
 
-        <Button onClick={onClose} className="w-full mt-4">Done Packing</Button>
+        <button onClick={onClose} className="btn-noir w-full mt-4 justify-center">Done Packing</button>
       </DialogContent>
     </Dialog>
   );
@@ -223,12 +223,12 @@ export default function SuitcasePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 style={{fontFamily:"'Cormorant Garamond',serif"}} className="text-3xl font-semibold">Suitcases</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Plan what to pack for every trip</p>
+          <h1 className="page-title">Suitcases</h1>
+          <p className="page-subtitle">Plan what to pack for every trip</p>
         </div>
-        <Button data-testid="btn-new-trip" onClick={() => setNewOpen(true)} className="gap-2">
-          <Plus size={16} /> New Trip
-        </Button>
+        <button data-testid="btn-new-trip" onClick={() => setNewOpen(true)} className="btn-noir">
+          <Plus size={15} /> New Trip
+        </button>
       </div>
 
       {suitcases.length === 0 ? (
@@ -245,10 +245,10 @@ export default function SuitcasePage() {
             const packedItems = items.filter(i => itemIds.includes(i.id));
 
             return (
-              <div key={sc.id} data-testid={`suitcase-card-${sc.id}`} className="bg-card border border-border rounded-xl p-4 space-y-3 group">
+              <div key={sc.id} data-testid={`suitcase-card-${sc.id}`} className="editorial-card space-y-3 group">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 style={{fontFamily:"'Cormorant Garamond',serif"}} className="text-lg font-semibold">{sc.tripName}</h3>
+                    <h3 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:"1.05rem",fontWeight:700,letterSpacing:"-0.01em"}}>{sc.tripName}</h3>
                     {sc.destination && <p className="text-sm text-muted-foreground">{sc.destination}</p>}
                     {(sc.startDate || sc.endDate) && (
                       <p className="text-xs text-muted-foreground mt-0.5">
@@ -285,13 +285,14 @@ export default function SuitcasePage() {
                   <span className="text-xs text-muted-foreground">
                     {itemIds.length} item{itemIds.length !== 1 ? "s" : ""} · {outfitIds.length} outfit{outfitIds.length !== 1 ? "s" : ""}
                   </span>
-                  <Button
+                  <button
                     data-testid={`btn-pack-${sc.id}`}
-                    variant="outline" size="sm"
+                    className="btn-ghost"
+                    style={{padding:"6px 12px",fontSize:11}}
                     onClick={() => setPackingSuitcase(sc)}
                   >
                     Pack Suitcase
-                  </Button>
+                  </button>
                 </div>
               </div>
             );
