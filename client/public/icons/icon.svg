@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#7a2d4e"/>
+  <!-- Hanger hook -->
+  <circle cx="256" cy="112" r="28" fill="none" stroke="#e8d5b0" stroke-width="20"/>
+  <line x1="256" y1="140" x2="256" y2="196" stroke="#e8d5b0" stroke-width="20" stroke-linecap="round"/>
+  <!-- Hanger bar -->
+  <line x1="96" y1="196" x2="416" y2="196" stroke="#e8d5b0" stroke-width="20" stroke-linecap="round"/>
+  <!-- Left shoulder -->
+  <line x1="96" y1="196" x2="136" y2="260" stroke="#e8d5b0" stroke-width="20" stroke-linecap="round"/>
+  <!-- Right shoulder -->
+  <line x1="416" y1="196" x2="376" y2="260" stroke="#e8d5b0" stroke-width="20" stroke-linecap="round"/>
+  <!-- Dress body -->
+  <path d="M136 260 Q100 340 80 420 H432 Q412 340 376 260 Z" fill="#c97fa0" opacity="0.9"/>
+  <!-- Dress waist detail -->
+  <path d="M136 260 Q256 310 376 260" fill="none" stroke="#e8d5b0" stroke-width="12" stroke-linecap="round"/>
+</svg>

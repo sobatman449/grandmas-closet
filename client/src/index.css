@@ -340,3 +340,106 @@
   color: hsl(var(--primary-foreground));
   border-color: hsl(var(--primary));
 }
+
+/* ── Mobile / PWA ─────────────────────────────────────────────────────────── */
+
+/* Safe areas for iPhone notch and home indicator */
+body {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+header {
+  padding-left:  env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+main {
+  padding-left:  max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+/* Standalone PWA: hide the browser bar gap */
+@media (display-mode: standalone) {
+  header {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Bigger touch targets on mobile */
+@media (max-width: 640px) {
+  .cat-pill {
+    padding: 7px 16px;
+    font-size: 14px;
+    min-height: 38px;
+  }
+
+  button, [role="button"] {
+    min-height: 40px;
+  }
+
+  /* Rack items — wider spacing for finger taps */
+  .rack-scroll {
+    gap: 28px;
+    padding: 0 20px 20px;
+    /* Momentum scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .garment-image {
+    width: 86px;
+    height: 104px;
+  }
+
+  .hanger-bar {
+    width: 52px;
+  }
+
+  /* Shelf grid — 4 columns on phone, 6 on tablet */
+  .shelf-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Full-width dialogs on small screens */
+  [role="dialog"] > div {
+    margin: 0 !important;
+    max-width: 100% !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    max-height: 92dvh !important;
+    overflow-y: auto !important;
+  }
+
+  /* Try-on canvas: full width */
+  .tryon-canvas-wrapper {
+    width: 100% !important;
+  }
+
+  /* What's New banner: full width on mobile */
+  .fixed.bottom-5.right-5 {
+    bottom: calc(env(safe-area-inset-bottom) + 12px) !important;
+    right: 12px !important;
+    left: 12px !important;
+    width: auto !important;
+  }
+}
+
+/* iPad (medium screens) */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .shelf-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .garment-image {
+    width: 96px;
+    height: 114px;
+  }
+}
+
+/* Prevent double-tap zoom on interactive elements */
+button, a, .cat-pill, .hanger-item, .shelf-item {
+  touch-action: manipulation;
+}

@@ -18,17 +18,14 @@ if %errorlevel% neq 0 (
 )
 
 REM ── Auto-update ───────────────────────────────────────────────────────────
-set UPDATED=0
 git remote get-url origin >nul 2>&1
 if %errorlevel% equ 0 (
     git fetch origin main --quiet >nul 2>&1
-    for /f %%i in ('git rev-parse HEAD 2^>nul') do set LOCAL=%%i
-    for /f %%i in ('git rev-parse origin/main 2^>nul') do set REMOTE=%%i
-    if not "%LOCAL%"=="%REMOTE%" (
+    for /f %%i in ('git rev-parse HEAD 2^>nul') do set LOCAL_SHA=%%i
+    for /f %%i in ('git rev-parse origin/main 2^>nul') do set REMOTE_SHA=%%i
+    if not "%LOCAL_SHA%"=="%REMOTE_SHA%" (
         git pull origin main --quiet >nul 2>&1
         call npm install --silent >nul 2>&1
-        set UPDATED=1
-        REM Write a flag file so the app can show the What's New banner
         echo 1 > "%~dp0.updated"
     )
 )
@@ -38,8 +35,24 @@ if not exist "%~dp0node_modules\" (
     call npm install --silent >nul 2>&1
 )
 
+REM ── Detect local IP address ───────────────────────────────────────────────
+set LOCAL_IP=localhost
+for /f "tokens=2 delims=:" %%a in ('ipconfig ^| findstr /i "IPv4" ^| findstr /v "169.254"') do (
+    for /f "tokens=1" %%b in ("%%a") do (
+        if not defined LOCAL_IP_FOUND (
+            set LOCAL_IP=%%b
+            set LOCAL_IP_FOUND=1
+        )
+    )
+)
+REM Trim leading space
+for /f "tokens=* delims= " %%a in ("%LOCAL_IP%") do set LOCAL_IP=%%a
+
+REM Write IP to temp file so the splash can read it
+echo %LOCAL_IP% > "%TEMP%\mycloset_ip.txt"
+
 REM ── Kill any old instance on port 3737 ────────────────────────────────────
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3737 ^| findstr LISTENING') do (
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3737 ^| findstr LISTENING 2^>nul') do (
     taskkill /f /pid %%a >nul 2>&1
 )
 
@@ -54,6 +67,6 @@ timeout /t 1 /nobreak >nul 2>&1
 curl -s http://localhost:%PORT% >nul 2>&1
 if %errorlevel% neq 0 goto WAIT
 
-REM ── Signal splash to close and open browser ───────────────────────────────
+REM ── Signal splash screen ─────────────────────────────────────────────────
 echo ready > "%TEMP%\mycloset_ready.flag"
 start http://localhost:%PORT%

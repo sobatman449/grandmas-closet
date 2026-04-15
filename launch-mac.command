@@ -1,8 +1,6 @@
 #!/bin/bash
 
 # My Closet — macOS Launcher
-# Double-click this file to open your closet app in the browser.
-
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 
@@ -20,7 +18,6 @@ fi
 
 # ── Auto-update from GitHub ───────────────────────────────────────────────
 echo "Checking for updates..."
-# Only attempt if we're inside a git repo with a remote
 if git remote get-url origin &>/dev/null 2>&1; then
   git fetch origin main --quiet 2>/dev/null
   LOCAL=$(git rev-parse HEAD 2>/dev/null)
@@ -30,23 +27,23 @@ if git remote get-url origin &>/dev/null 2>&1; then
     echo "Update found — pulling latest version..."
     git pull origin main --quiet 2>/dev/null
     touch "$DIR/.updated"
-    # Re-run npm install in case dependencies changed
     npm install --silent
     osascript -e 'display notification "My Closet was updated to the latest version!" with title "My Closet 👗"'
   else
     echo "Already up to date."
   fi
-else
-  echo "No git remote found — skipping update check."
 fi
 
-# ── Install dependencies if node_modules missing ──────────────────────────
+# ── Install dependencies if missing ──────────────────────────────────────
 if [ ! -d "node_modules" ]; then
   echo "First-time setup: installing dependencies..."
   npm install --silent
 fi
 
-# ── Find a free port (default 3737) ──────────────────────────────────────
+# ── Get local IP address ──────────────────────────────────────────────────
+LOCAL_IP=$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || echo "localhost")
+
+# ── Find a free port ──────────────────────────────────────────────────────
 PORT=3737
 while lsof -i:$PORT &>/dev/null 2>&1; do
   PORT=$((PORT + 1))
@@ -65,13 +62,34 @@ for i in {1..30}; do
   sleep 1
 done
 
-# ── Open in browser ───────────────────────────────────────────────────────
+# ── Open desktop browser ──────────────────────────────────────────────────
 open "http://localhost:$PORT"
-osascript -e "display notification \"My Closet is open in your browser!\" with title \"My Closet 👗\""
+osascript -e "display notification \"My Closet is open! Phone URL: http://$LOCAL_IP:$PORT\" with title \"My Closet 👗\""
+
+# ── Print phone/tablet connection info ───────────────────────────────────
+echo ""
+echo "═══════════════════════════════════════════"
+echo "  ✅  My Closet is running!"
+echo ""
+echo "  💻  This computer:  http://localhost:$PORT"
+echo "  📱  Phone / iPad:   http://$LOCAL_IP:$PORT"
+echo ""
+echo "  On your iPhone or iPad:"
+echo "  1. Open Safari"
+echo "  2. Go to: http://$LOCAL_IP:$PORT"
+echo "  3. Tap Share → Add to Home Screen"
+echo "═══════════════════════════════════════════"
+
+# Print QR code if qrencode is available
+if command -v qrencode &>/dev/null; then
+  echo ""
+  echo "  Scan with your phone camera:"
+  echo ""
+  qrencode -t ANSIUTF8 -s 1 "http://$LOCAL_IP:$PORT"
+fi
 
 echo ""
-echo "✅  My Closet is running at http://localhost:$PORT"
-echo "    Close this window to stop the app."
+echo "  Close this window to stop the app."
 echo ""
 
 trap "kill $SERVER_PID 2>/dev/null; exit" INT TERM EXIT
