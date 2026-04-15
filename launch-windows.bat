@@ -2,8 +2,6 @@
 title My Closet
 
 REM ── My Closet — Windows Launcher ─────────────────────────────────────────
-REM    Double-click this file to open your closet app.
-
 cd /d "%~dp0"
 
 REM ── Check for Node.js ─────────────────────────────────────────────────────
@@ -19,40 +17,64 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-REM ── Install dependencies if needed ────────────────────────────────────────
-if not exist "node_modules\" (
+REM ── Check for Git ─────────────────────────────────────────────────────────
+where git >nul 2>&1
+if %errorlevel% neq 0 (
     echo.
-    echo  First-time setup: installing app dependencies...
-    echo  This only happens once and takes about a minute.
+    echo  Git is not installed!
+    echo  Please go to https://git-scm.com and install it.
+    echo  After installing, double-click this file again.
     echo.
-    call npm install --silent
-    if %errorlevel% neq 0 (
-        echo  Installation failed. Check your internet connection and try again.
-        pause
-        exit /b 1
-    )
+    pause
+    start https://git-scm.com
+    exit /b 1
 )
 
-REM ── Set port and start server ──────────────────────────────────────────────
+REM ── Auto-update from GitHub ───────────────────────────────────────────────
+echo.
+echo  Checking for updates...
+
+git remote get-url origin >nul 2>&1
+if %errorlevel% equ 0 (
+    git fetch origin main --quiet >nul 2>&1
+
+    REM Compare local HEAD to remote
+    for /f %%i in ('git rev-parse HEAD 2^>nul') do set LOCAL=%%i
+    for /f %%i in ('git rev-parse origin/main 2^>nul') do set REMOTE=%%i
+
+    if not "%LOCAL%"=="%REMOTE%" (
+        echo  Update found! Pulling latest version...
+        git pull origin main --quiet
+        call npm install --silent
+        echo  App updated to latest version.
+    ) else (
+        echo  Already up to date.
+    )
+) else (
+    echo  No git remote found - skipping update check.
+)
+
+REM ── Install dependencies if missing ───────────────────────────────────────
+if not exist "node_modules\" (
+    echo.
+    echo  First-time setup: installing dependencies...
+    call npm install --silent
+)
+
+REM ── Start server and open browser ─────────────────────────────────────────
 set PORT=3737
 
 echo.
 echo  Starting My Closet...
-echo.
 
-REM Start server in background
 start /b "" cmd /c "set PORT=%PORT% && npm run dev > %TEMP%\mycloset.log 2>&1"
 
-REM Wait for server to be ready
 echo  Waiting for app to start...
 :WAIT_LOOP
 timeout /t 2 /nobreak >nul
 curl -s http://localhost:%PORT% >nul 2>&1
-if %errorlevel% neq 0 (
-    goto WAIT_LOOP
-)
+if %errorlevel% neq 0 goto WAIT_LOOP
 
-REM Open in default browser
 echo  Opening My Closet in your browser...
 start http://localhost:%PORT%
 
