@@ -167,7 +167,7 @@ Section "Install" SecMain
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_SLUG}" \
                      "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_SLUG}" \
-                     "NoRepair"  1
+                     "NoRepair" 1
   WriteRegStr   HKLM "Software\${APP_SLUG}" "InstallDir" "$INSTDIR"
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
