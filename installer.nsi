@@ -1,3 +1,4 @@
+
 ; ═══════════════════════════════════════════════════════════════════════════
 ;  Grandma's Closet — Windows Installer
 ;
@@ -41,8 +42,8 @@ RequestExecutionLevel admin    ; needed to install Node.js + write to Program Fi
 !define MUI_UNICON              "${APP_ICON}"
 !define MUI_WELCOMEPAGE_TITLE   "Welcome to Grandma's Closet"
 !define MUI_WELCOMEPAGE_TEXT    "This will set up Grandma's Closet on your computer.$\r$\n$\r$\nClick Next to continue."
-!define MUI_FINISHPAGE_RUN      "$SYSDIR\wscript.exe"
-!define MUI_FINISHPAGE_RUN_PARAMETERS  '"$INSTDIR\launch.vbs"'
+!define MUI_FINISHPAGE_RUN      "$INSTDIR\launch-windows.vbs"
+!define MUI_FINISHPAGE_RUN_PARAMETERS  ""
 !define MUI_FINISHPAGE_RUN_TEXT "Open Grandma's Closet now"
 !define MUI_ABORTWARNING
 
@@ -116,8 +117,10 @@ Section "Install" SecMain
   File "postcss.config.js"
   File "drizzle.config.ts"
   File "components.json"
-  File "launch.vbs"
-  File "launch.bat"
+  File "launch-windows.vbs"
+  File "launch-windows.bat"
+  File "launch-windows-worker.bat"
+  File "launcher-splash.hta"
 
   File /r "client"
   File /r "server"
@@ -138,16 +141,16 @@ Section "Install" SecMain
   DetailPrint "Creating shortcuts..."
   CreateShortcut \
     "$DESKTOP\Grandma's Closet.lnk" \
-    "$SYSDIR\wscript.exe" \
-    '"$INSTDIR\launch.vbs"' \
+    "$INSTDIR\launch-windows.vbs" \
+    "" \
     "$INSTDIR\${APP_ICON}" 0
 
   ; ── Start Menu ───────────────────────────────────────────────────────────
   CreateDirectory "$SMPROGRAMS\Grandma's Closet"
   CreateShortcut \
     "$SMPROGRAMS\Grandma's Closet\Grandma's Closet.lnk" \
-    "$SYSDIR\wscript.exe" \
-    '"$INSTDIR\launch.vbs"' \
+    "$INSTDIR\launch-windows.vbs" \
+    "" \
     "$INSTDIR\${APP_ICON}" 0
   CreateShortcut \
     "$SMPROGRAMS\Grandma's Closet\Uninstall.lnk" \

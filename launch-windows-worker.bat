@@ -65,7 +65,7 @@ set /a ATTEMPT+=1
 if %ATTEMPT% gtr 3 goto GIVE_UP
 
 REM ── Start the server ──────────────────────────────────────────────────────
-start /b "" cmd /c "npm run dev > %TEMP%\mycloset.log 2>&1"
+start /b "" cmd /c "npx tsx server/index.ts > %TEMP%\mycloset.log 2>&1"
 
 REM Give the process a moment to get its PID into the table
 timeout /t 2 /nobreak >nul 2>&1
