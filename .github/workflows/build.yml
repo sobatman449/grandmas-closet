@@ -23,9 +23,14 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          npm install -g tsx
 
-      - name: Build and Package
+      - name: Build Project
+        run: npm run build
+
+      - name: Build and Package Electron
         run: npm run electron:build:win
 
       - name: Upload Installer
