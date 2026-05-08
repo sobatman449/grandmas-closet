@@ -17,6 +17,7 @@ interface Overlay {
   y: number;
   width: number;
   height: number;
+  isProcessing?: boolean;
 }
 
 function DraggableOverlay({
@@ -34,36 +35,42 @@ function DraggableOverlay({
   const handleMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation();
     onSelect();
-    dragRef.current = {
-      startX: e.clientX, startY: e.clientY,
-      startOX: overlay.x, startOY: overlay.y
-    };
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startOX = overlay.x;
+    const startOY = overlay.y;
 
     const onMove = (ev: MouseEvent) => {
-      if (!dragRef.current) return;
       onChange({
-        x: dragRef.current.startOX + (ev.clientX - dragRef.current.startX),
-        y: dragRef.current.startOY + (ev.clientY - dragRef.current.startY),
+        x: startOX + (ev.clientX - startX),
+        y: startOY + (ev.clientY - startY),
       });
     };
-    const onUp = () => { dragRef.current = null; window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
   };
 
   const handleResizeDown = (e: React.MouseEvent) => {
     e.stopPropagation();
-    resizeRef.current = {
-      startX: e.clientX, startY: e.clientY,
-      startW: overlay.width, startH: overlay.height
-    };
+    onSelect();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startW = overlay.width;
+    const startH = overlay.height;
+
     const onMove = (ev: MouseEvent) => {
-      if (!resizeRef.current) return;
-      const newW = Math.max(40, resizeRef.current.startW + (ev.clientX - resizeRef.current.startX));
-      const newH = Math.max(40, resizeRef.current.startH + (ev.clientY - resizeRef.current.startY));
+      const newW = Math.max(40, startW + (ev.clientX - startX));
+      const newH = Math.max(40, startH + (ev.clientY - startY));
       onChange({ width: newW, height: newH });
     };
-    const onUp = () => { resizeRef.current = null; window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
   };
@@ -94,20 +101,38 @@ function DraggableOverlay({
     <div
       data-testid={`overlay-${overlay.id}`}
       className="overlay-item"
-      style={{ left: overlay.x, top: overlay.y, width: overlay.width, height: overlay.height, zIndex: selected ? 20 : 10 }}
+      style={{ 
+        left: overlay.x, 
+        top: overlay.y, 
+        width: overlay.width, 
+        height: overlay.height, 
+        zIndex: selected ? 100 : 10,
+        pointerEvents: "auto" 
+      }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
     >
-      <img src={overlay.imageUrl} alt={overlay.name} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+      <img 
+        src={overlay.imageUrl} 
+        alt={overlay.name} 
+        style={{ 
+          width: "100%", 
+          height: "100%", 
+          objectFit: "contain",
+          pointerEvents: "none"
+        }} 
+      />
       {selected && (
         <>
           <div
             className="resize-handle"
             onMouseDown={handleResizeDown}
+            style={{ pointerEvents: "auto" }}
           />
           <div
             className="delete-handle"
             onClick={(e) => { e.stopPropagation(); onDelete(); }}
+            style={{ pointerEvents: "auto" }}
           >
             ×
           </div>
@@ -174,15 +199,30 @@ export default function TryOnPage() {
 
   const addOverlay = (item: ClothingItem) => {
     const id = `overlay-${Date.now()}`;
+
+    // --- Intelligent Sizing and Positioning based on Category ---
+    const categoryDefaults: Record<string, { w: number; h: number; x: number; y: number }> = {
+      tops:           { w: 180, h: 200, x: 150, y: 100 },
+      bottoms:        { w: 160, h: 220, x: 150, y: 320 },
+      dresses:        { w: 180, h: 350, x: 150, y: 100 },
+      shoes:          { w: 80,  h: 60,  x: 200, y: 420 },
+      handbags:       { w: 100, h: 100, x: 250, y: 300 },
+      jewelry:        { w: 40,  h: 40,  x: 220, y: 50 },
+      bras_underwear:  { w: 160, h: 150, x: 150, y: 150 },
+      accessories:     { w: 80,  h: 80,  x: 200, y: 100 },
+    };
+
+    const def = categoryDefaults[item.category] || { w: 120, h: 140, x: 100, y: 100 };
+
     const newOverlay: Overlay = {
       id,
       itemId: item.id,
-      imageUrl: item.imageUrl || "",
+      imageUrl: item.imageUrl || item.originalImageUrl || "",
       name: item.name,
-      x: 20 + Math.random() * 40,
-      y: 60 + Math.random() * 40,
-      width: 120,
-      height: 140,
+      x: def.x,
+      y: def.y,
+      width: def.w,
+      height: def.h,
     };
     setOverlays(prev => [...prev, newOverlay]);
     setSelectedId(id);

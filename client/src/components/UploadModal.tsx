@@ -56,6 +56,18 @@ export default function UploadModal({ open, onClose, onSave }: Props) {
     setProcessed(null);
     setProgress(0);
     setName(f.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "));
+
+    // --- Auto Process Background ---
+    setIsProcessing(true);
+    try {
+      const result = await removeBackground(f, setProgress);
+      setProcessed(result);
+      toast({ title: "Background removed!", description: "Looking great." });
+    } catch (e) {
+      toast({ title: "Background removal failed", description: "Using original image.", variant: "destructive" });
+      setProcessed(orig);
+    }
+    setIsProcessing(false);
   };
 
   const handleProcess = async () => {
@@ -121,8 +133,8 @@ export default function UploadModal({ open, onClose, onSave }: Props) {
             )}
           </div>
 
-          {/* BG removal */}
-          {preview && !processed && (
+          {/* BG removal progress */}
+          {preview && (
             <div className="space-y-2">
               {isProcessing ? (
                 <>
@@ -130,15 +142,11 @@ export default function UploadModal({ open, onClose, onSave }: Props) {
                   <Progress value={progress} className="h-1.5" />
                 </>
               ) : (
-                <button data-testid="btn-remove-bg" onClick={handleProcess} className="btn-ghost w-full justify-center">
-                  <ImageIcon size={14} /> Remove Background
-                </button>
+                processed && (
+                  <div style={{fontSize:10,textAlign:"center" as const,letterSpacing:"0.1em",textTransform:"uppercase" as const,color:"var(--gold)",fontWeight:600}}>✓ Background removed</div>
+                )
               )}
             </div>
-          )}
-
-          {processed && (
-            <div style={{fontSize:10,textAlign:"center" as const,letterSpacing:"0.1em",textTransform:"uppercase" as const,color:"var(--gold)",fontWeight:600}}>✓ Background removed</div>
           )}
 
           {/* Fields */}

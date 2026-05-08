@@ -1,11 +1,7 @@
 node_modules/
 dist/
-*.db
-.updated
-*.db-shm
-*.db-wal
+dist-electron/
+*.exe
+*.log
+.node-version
 .env
-.env.local
-/tmp/
-.DS_Store
-Thumbs.db

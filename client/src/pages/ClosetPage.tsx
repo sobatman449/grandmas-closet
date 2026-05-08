@@ -75,10 +75,43 @@ const SECTIONS: Section[] = [
   { id: "intimates", label: "Intimates", icon: "🩱", cats: ["bras_underwear"] },
 ];
 
+function Showcase({ items }: { items: ClothingItem[] }) {
+  if (items.length === 0) return <div className="flex items-center justify-center h-96 text-muted-foreground">No items to showcase</div>;
+
+  return (
+    <div className="showcase-container h-[500px] rounded-xl border border-border relative">
+      <div className="showcase-track">
+        {items.map((item, i) => {
+          const angle = (360 / items.length) * i;
+          return (
+            <div
+              key={item.id}
+              className="showcase-item"
+              style={{
+                transform: `rotateY(${angle}deg) translateZ(300px)`,
+              }}
+            >
+              <img src={item.imageUrl || ""} alt={item.name} />
+              <div className="absolute -bottom-6 left-0 right-0 text-center">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{item.name}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center pointer-events-none">
+        <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest">The Collection</p>
+        <p className="text-[10px] text-muted-foreground/60">Hover to pause rotation</p>
+      </div>
+    </div>
+  );
+}
+
 export default function ClosetPage() {
   const [uploadOpen, setUploadOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("rack");
   const [activeCat, setActiveCat] = useState<string>("all");
+  const [showcaseMode, setShowcaseMode] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -110,11 +143,22 @@ export default function ClosetPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
+        <div className="flex items-center gap-4">
+          <div>
             <h1 className="page-title">My Closet</h1>
-          <p className="page-subtitle">
-            {totalCount} {totalCount === 1 ? "piece" : "pieces"} in your collection
-          </p>
+            <p className="page-subtitle">
+              {totalCount} {totalCount === 1 ? "piece" : "pieces"} in your collection
+            </p>
+          </div>
+          {totalCount > 0 && (
+            <button
+              onClick={() => setShowcaseMode(!showcaseMode)}
+              className={`btn-ghost ${showcaseMode ? "active" : ""}`}
+              style={{padding: "6px 12px", fontSize: 11}}
+            >
+              {showcaseMode ? "Exit Showcase" : "Spin Closet"}
+            </button>
+          )}
         </div>
         <button data-testid="btn-add-item" onClick={() => setUploadOpen(true)} className="btn-noir">
           <Plus size={15} /> Add Item
@@ -154,7 +198,9 @@ export default function ClosetPage() {
       )}
 
       {/* Content area */}
-      {isLoading ? (
+      {showcaseMode ? (
+        <Showcase items={items} />
+      ) : isLoading ? (
         <div className="flex justify-center py-12">
           <div className="processing-shimmer w-full h-40 rounded-xl" />
         </div>
