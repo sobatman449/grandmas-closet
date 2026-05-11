@@ -1,7 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
-const isDev = require('electron-is-dev');
+const isDev = !app.isPackaged;
 
 let serverProcess = null;
 
@@ -41,7 +41,7 @@ function createWindow() {
 
   const url = isDev 
     ? 'http://localhost:5001' 
-    : `file://${path.join(__dirname, '../dist/client/index.html')}`;
+    : `file://${path.join(__dirname, '../dist/public/index.html')}`;
 
   win.loadURL(url);
 
