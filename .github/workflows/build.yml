@@ -31,3 +31,72 @@ jobs:
         with:
           name: GrandmasCloset-Windows-Installer
           path: dist-electron/*.exe
+
+  smoke-test:
+    needs: build
+    runs-on: windows-latest
+
+    steps:
+      - name: Download installer
+        uses: actions/download-artifact@v4
+        with:
+          name: GrandmasCloset-Windows-Installer
+          path: installer
+
+      - name: Run installer silently
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem installer\*.exe | Select-Object -First 1
+          Write-Host "Installing $($exe.FullName)"
+          Start-Process -FilePath $exe.FullName -ArgumentList "/S" -Wait
+          Write-Host "Install complete"
+
+      - name: Locate installed app
+        id: locate
+        shell: pwsh
+        run: |
+          $app = Get-ChildItem -Path "$env:LOCALAPPDATA\Programs" -Recurse -Filter "Grandma's Closet.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $app) {
+            Write-Error "Installed .exe not found under LOCALAPPDATA\Programs"
+            exit 1
+          }
+          Write-Host "Found: $($app.FullName)"
+          "exe=$($app.FullName)" >> $env:GITHUB_OUTPUT
+
+      - name: Launch app and verify server responds
+        shell: pwsh
+        run: |
+          $exe = "${{ steps.locate.outputs.exe }}"
+          Write-Host "Launching $exe"
+          $proc = Start-Process -FilePath $exe -PassThru
+          Write-Host "PID: $($proc.Id)"
+
+          $ok = $false
+          $body = ""
+          for ($i = 0; $i -lt 60; $i++) {
+            Start-Sleep -Seconds 2
+            try {
+              $resp = Invoke-WebRequest -Uri "http://127.0.0.1:5001" -UseBasicParsing -TimeoutSec 3
+              if ($resp.StatusCode -eq 200) {
+                $body = $resp.Content
+                $ok = $true
+                Write-Host "Server responded after $($i * 2)s"
+                break
+              }
+            } catch {
+              Write-Host "Attempt $($i + 1): not ready"
+            }
+          }
+
+          Write-Host "Cleaning up..."
+          Get-Process | Where-Object { $_.ProcessName -like "*Grandma*" -or $_.ProcessName -like "*electron*" } | Stop-Process -Force -ErrorAction SilentlyContinue
+
+          if (-not $ok) {
+            Write-Error "Server never responded on http://127.0.0.1:5001"
+            exit 1
+          }
+          if ($body -notmatch "<!DOCTYPE html>" -and $body -notmatch "<html") {
+            Write-Error "Response did not look like HTML. First 300 chars: $($body.Substring(0, [Math]::Min(300, $body.Length)))"
+            exit 1
+          }
+          Write-Host "OK: app launched, server bound, HTML served."
