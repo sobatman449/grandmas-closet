@@ -10,34 +10,35 @@ A personal virtual wardrobe organizer — built with love.
 - **Suitcases** — Plan what to pack for each trip. Add individual pieces or whole outfits.
 - **Try-On** — Upload a photo of yourself, then drag and resize clothing pieces on top of it to preview looks.
 
-## Quick Start
+## Install (Windows)
 
-### Mac
-Double-click `launch-mac.command`  
-(First run: right-click → Open if macOS warns about unverified developer)
+1. Download `Grandma's Closet Setup.exe` from the [latest GitHub release](../../releases/latest) (or the Actions artifact after a build).
+2. Double-click to install. It creates a desktop shortcut and a Start Menu entry.
+3. Open from the desktop icon. The app icon appears in the taskbar while running.
 
-### Windows
-Double-click `launch-windows.bat`
+All data lives in `%APPDATA%\Grandma's Closet\closet.db`. Nothing leaves the machine.
 
-### Manual (any platform)
+## Build the Windows Installer
+
+Builds run on GitHub Actions (`.github/workflows/build.yml`):
+
+- **Automatic** — push to `main`.
+- **Manual** — Actions tab → "Build Windows Installer" → Run workflow.
+
+Download the `.exe` from the workflow run's artifacts.
+
+## Develop Locally
+
 ```bash
 npm install
-npm run dev
-# Open http://localhost:5000
+npm run dev            # browser at http://localhost:5001
+npm run electron:dev   # run inside the Electron shell
 ```
-
-## Requirements
-
-- [Node.js](https://nodejs.org) LTS (v18+)
-- A modern browser (Chrome, Edge, Safari, Firefox)
 
 ## Tech Stack
 
 - **Frontend:** React + Vite + Tailwind CSS + shadcn/ui
 - **Backend:** Express.js
-- **Database:** SQLite (local, stored in `closet.db`)
-- **BG Removal:** [@imgly/background-removal](https://www.npmjs.com/package/@imgly/background-removal) — ONNX model, runs in-browser via WebAssembly/WebGPU
-
-## Privacy
-
-All data lives on your computer. Photos never leave your machine.
+- **Database:** SQLite (better-sqlite3, local)
+- **Shell:** Electron + electron-builder (one-click NSIS installer)
+- **BG Removal:** [@imgly/background-removal](https://www.npmjs.com/package/@imgly/background-removal) — runs in-browser via WebAssembly/WebGPU

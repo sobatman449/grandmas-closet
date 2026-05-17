@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import Database from "better-sqlite3";
 import { eq } from "drizzle-orm";
+import path from "path";
 import {
   clothingItems, avatarPhotos, outfits, suitcases,
   type ClothingItem, type InsertClothingItem,
@@ -9,7 +10,8 @@ import {
   type Suitcase, type InsertSuitcase,
 } from "@shared/schema";
 
-const sqlite = new Database("closet.db");
+const dataDir = process.env.GRANDMAS_CLOSET_DATA_DIR || process.cwd();
+const sqlite = new Database(path.join(dataDir, "closet.db"));
 const db = drizzle(sqlite);
 
 // Create tables
