@@ -1,6 +1,7 @@
 # What's New in My Closet
 
 <!-- Keep newest version at the top. Date format: Month D, YYYY -->
+<!-- Agent security snapshot: [SECURITY-AUDIT-2026-09-26.md](SECURITY-AUDIT-2026-09-26.md). Dated local scan; re-run before relying on it. -->
 
 ## Version 1.1 — April 15, 2026
 - Added auto-update: the app now silently updates itself every time you open it
