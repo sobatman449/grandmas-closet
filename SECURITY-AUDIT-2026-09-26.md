@@ -1,6 +1,6 @@
 # Grandma’s Closet security scan — 2026-09-26
 
-**Status:** Local, uncommitted review note on `feature/security-audit-report-2026-09-26`. No dependencies or installer artifacts were changed.
+**Status:** Committed and merged (PR #2). The "Snapshot and method", "Results" and "Follow-up" sections below describe the original 2026-09-26 scan snapshot, taken when this note was an uncommitted review note and no dependencies had been changed. The "Remediation" sections further down record the dependency changes (`package.json` and `package-lock.json`) committed afterwards; the repo now audits at 0 vulnerabilities.
 
 ## Snapshot and method
 
